@@ -1,22 +1,42 @@
 from .request import Request
-from .response import Response
+from .response import Response, CustomResponse
 
 
 class Application(object):
     def __init__(self):
         self.routes = {}
+        self.middlewares = []
 
     def __call__(self, env, start_response):
         request = Request(env)
-        m = self.match_route(request.path)
-        if m:
-            meth, args = m
-            args = {k: v for k, v in args}
-            response = meth(request, **args)
-            if isinstance(response, str):
-                response = Response(response)
-        else:
-            response = Response('Not Found!')  # TODO: Generate 404
+        skip_request = False
+
+        for middleware in self.middlewares:
+            response = middleware.pre_request(request)
+            if response is not None:
+                skip_request = True
+                break
+
+        if not skip_request:
+            match = self.match_route(request.path)
+            if match:
+                meth, args = match
+                args = {k: v for k, v in args}
+                response = meth(request, **args)
+            else:
+                response = Response('Not Found!')  # TODO: Generate 404
+
+        for middleware in self.middlewares:
+            new_response = middleware.post_request(request, response)
+            if new_response is not None:
+                response = new_response
+                break
+
+        if isinstance(response, str):
+            response = Response(response)
+        elif isinstance(response, tuple):
+            status, content_type, body = response
+            response = CustomResponse(status, content_type, body)
         return response.bake(start_response)
 
     def route(self, urlpattern):

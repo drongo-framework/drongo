@@ -31,6 +31,26 @@ class Response(object):
         return [body]
 
 
+class CustomResponse(Response):
+    def __init__(self, status, content_type, body):
+        self.status = status
+        self.content_type = content_type
+        self.body = body
+        self.headers = {}
+        self.cookies = http.cookies.BaseCookie()
+
+    def bake(self, start_response):
+        self.headers['content-length'] = str(len(self.body))
+        self.headers['content-type'] = self.content_type
+        headers = self.headers.items()
+        cookies = [('set-cookie', v.OutputString())
+                   for _, v in self.cookies.items()]
+        if len(self.cookies):
+            headers = list(headers) + cookies
+        start_response(self.status, headers)
+        return [self.body]
+
+
 class JSONResponse(object):
     CONTENT_TYPE = 'application/javascript'
 
