@@ -13,7 +13,7 @@ class Request(object):
         fs = cgi.FieldStorage(inp, environ=env)
         for k in fs:
             fld = fs[k]
-            if not hasattr(fld, 'filename'):
+            if not hasattr(fld, 'filename') or fld.filename is None:
                 fld = fs.getlist(k)
             self._query[k] = fld
 
