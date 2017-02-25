@@ -51,7 +51,7 @@ class CustomResponse(Response):
         return [self.body]
 
 
-class JSONResponse(object):
+class JSONResponse(Response):
     CONTENT_TYPE = 'application/javascript'
 
     def __init__(self, obj):
