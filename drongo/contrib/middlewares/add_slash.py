@@ -1,6 +1,5 @@
+from drongo.middleware import Middleware
 from drongo.response import Redirect
-
-from .base import Middleware
 
 
 class AddSlashMiddleware(Middleware):

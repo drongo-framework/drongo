@@ -1,6 +1,5 @@
+from drongo.middleware import Middleware
 from drongo.status_codes import HTTP_STATUS_CODES
-
-from .base import Middleware
 
 import mimetypes
 import os
