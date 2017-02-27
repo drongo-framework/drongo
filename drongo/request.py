@@ -3,6 +3,9 @@ import http.cookies
 
 
 class Request(object):
+
+    __slots__ = ['env', '_query', '_cookies']
+
     def __init__(self, env):
         self.env = env
 

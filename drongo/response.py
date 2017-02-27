@@ -8,6 +8,8 @@ class Response(object):
     STATUS_CODE = HTTP_STATUS_CODES[200]
     CONTENT_TYPE = 'text/html'
 
+    __slots__ = ['content', 'headers', 'cookies']
+
     def __init__(self, content):
         self.content = content
         self.headers = {}
