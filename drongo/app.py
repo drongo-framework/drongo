@@ -1,5 +1,6 @@
 from .request import Request
 from .response import Response, CustomResponse
+from .status_codes import HTTP_STATUS_CODES
 
 
 class Application(object):
@@ -24,9 +25,10 @@ class Application(object):
                 args = {k: v for k, v in args}
                 response = meth(request, **args)
             else:
-                response = Response('Not Found!')  # TODO: Generate 404
+                response = CustomResponse(HTTP_STATUS_CODES[404], 'text/plain',
+                                          b'Not Found!')
 
-        for middleware in self.middlewares:
+        for middleware in self.middlewares[::-1]:
             new_response = middleware.post_request(request, response)
             if new_response is not None:
                 response = new_response
@@ -69,6 +71,9 @@ class Application(object):
                 if result:
                     return result
             elif len(key) and key[0] == '{':
+                continue
+        for key in node:
+            if len(key) and key[0] == '{':
                 result = self.recursive_route_match(
                     node[key], remaining[1:],
                     args + [(key[1:-1], remaining[0])]
