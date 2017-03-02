@@ -17,11 +17,12 @@ class Request(object):
         for k in fs:
             fld = fs[k]
             is_file = False
-            if hasattr(fld, '__iter__'):
-                for item in fld:
+            try:
+                it = iter(fld)
+                for item in it:
                     if hasattr(item, 'filename') and item.filename:
                         is_file = True
-            else:
+            except:
                 if hasattr(fld, 'filename') and fld.filename:
                     is_file = True
             if not is_file:
