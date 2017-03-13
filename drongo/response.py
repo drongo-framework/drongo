@@ -1,74 +1,54 @@
 import json
 import http.cookies
 
-from .status_codes import HTTP_STATUS_CODES
+from .response_headers import HttpResponseHeaders
+from .status_codes import HttpStatusCodes
+from .utils import dict2
 
 
 class Response(object):
-    STATUS_CODE = HTTP_STATUS_CODES[200]
-    CONTENT_TYPE = 'text/html'
+    __slots__ = ['_content', '_content_length', '_context', '_cookies',
+                 '_headers', '_status_code']
 
-    __slots__ = ['content', 'headers', 'cookies']
+    def __init__(self):
+        self._content = 'None'
+        self._content_length = None
+        self._context = dict2()
+        self._cookies = http.cookies.BaseCookie()
+        self._headers = {HttpResponseHeaders.CONTENT_TYPE: 'text/html'}
+        self._status_code = HttpStatusCodes.HTTP_200
 
-    def __init__(self, content):
-        self.content = content
-        self.headers = {}
-        self.cookies = http.cookies.BaseCookie()
+    def set_status(self, status_code):
+        self._status_code = status_code
 
     def set_header(self, key, value):
-        self.headers[key] = value
+        self._headers[key] = value
 
     def set_cookie(self, key, value):
-        self.cookies[key] = value
+        self._cookies[key] = value
+
+    def set_content(self, content, content_length=None):
+        self._content_length = content_length
+        self._content = content
 
     def bake(self, start_response):
-        body = bytes(self.content, 'utf8')
-        self.headers['content-length'] = str(len(body))
-        headers = self.headers.items()
-        cookies = [('set-cookie', v.OutputString())
-                   for _, v in self.cookies.items()]
-        if len(self.cookies):
+        if isinstance(self._content, str):
+            self._content = bytes(self._content, 'utf8')
+
+        if self._content_length is None:
+            self._content_length = len(self._content)
+
+        self._headers[HttpResponseHeaders.CONTENT_LENGTH] = \
+            str(len(self._content))
+        headers = list(self._headers.items())
+        cookies = [(HttpResponseHeaders.SET_COOKIE, v.OutputString())
+                   for _, v in self._cookies.items()]
+
+        if len(cookies):
             headers = list(headers) + cookies
-        start_response(self.STATUS_CODE, headers)
-        return [body]
+        start_response(self._status_code, headers)
 
+        if isinstance(self._content, bytes):
+            return [self._content]
 
-class CustomResponse(Response):
-    def __init__(self, status, content_type, body):
-        self.status = status
-        self.content_type = content_type
-        self.body = body
-        self.headers = {}
-        self.cookies = http.cookies.BaseCookie()
-
-    def bake(self, start_response):
-        self.headers['content-length'] = str(len(self.body))
-        self.headers['content-type'] = self.content_type
-        headers = self.headers.items()
-        cookies = [('set-cookie', v.OutputString())
-                   for _, v in self.cookies.items()]
-        if len(self.cookies):
-            headers = list(headers) + cookies
-        start_response(self.status, headers)
-        return [self.body]
-
-
-class JSONResponse(Response):
-    CONTENT_TYPE = 'application/javascript'
-
-    def __init__(self, obj):
-        super(JSONResponse, self).__init__(json.dumps(obj))
-
-
-class Redirect(object):
-    STATUS_CODE = HTTP_STATUS_CODES[303]
-
-    def __init__(self, location):
-        self.location = location
-        self.headers = {}
-
-    def bake(self, start_response):
-        self.headers['location'] = self.location
-        headers = self.headers.items()
-        start_response(self.STATUS_CODE, headers)
-        return []
+        return self._content

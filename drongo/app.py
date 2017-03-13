@@ -1,44 +1,32 @@
 from .request import Request
-from .response import Response, CustomResponse
-from .status_codes import HTTP_STATUS_CODES
+from .response import Response
+from .utils import dict2
 
 
-class Application(object):
+class Drongo(object):
     def __init__(self):
         self.routes = {}
-        self.middlewares = []
+        self.context = dict2()
 
     def __call__(self, env, start_response):
+        # Create the request
         request = Request(env)
-        skip_request = False
+        request.context.update(self.context)
 
-        for middleware in self.middlewares:
-            response = middleware.pre_request(request)
-            if response is not None:
-                skip_request = True
-                break
+        # Create the response
+        response = Response()
 
-        if not skip_request:
-            match = self.match_route(request.path)
-            if match:
-                meth, args = match
-                args = {k: v for k, v in args}
-                response = meth(request, **args)
-            else:
-                response = CustomResponse(HTTP_STATUS_CODES[404], 'text/plain',
-                                          b'Not Found!')
+        # Route matching
+        match = self.match_route(request.path)
+        if match:
+            meth, args = match
+            args = {k: v for k, v in args}
+            ret = meth(request, response, **args)
+            if ret is not None:
+                # TODO: Check for types if really necessary!
+                response.set_content(ret)
+        # Returns empty response in case of no match
 
-        for middleware in self.middlewares[::-1]:
-            new_response = middleware.post_request(request, response)
-            if new_response is not None:
-                response = new_response
-                break
-
-        if isinstance(response, str):
-            response = Response(response)
-        elif isinstance(response, tuple):
-            status, content_type, body = response
-            response = CustomResponse(status, content_type, body)
         return response.bake(start_response)
 
     def route(self, urlpattern):
@@ -47,7 +35,6 @@ class Application(object):
         parts = tuple(urlpattern.split('/')[1:])
 
         def _inner(method):
-            method.__url__ = urlpattern
             node = self.routes
             for part in parts[:-1]:
                 node = node.setdefault(part, {})
@@ -56,7 +43,18 @@ class Application(object):
             return method
         return _inner
 
+    def add_route(self, urlpattern, method):
+        if not urlpattern.endswith('/'):
+            urlpattern += '/'
+        parts = tuple(urlpattern.split('/')[1:])
+        node = self.routes
+        for part in parts[:-1]:
+            node = node.setdefault(part, {})
+        node[parts[-1]] = method
+
     def recursive_route_match(self, node, remaining, args):
+        # Route is stored in tree form for quick matching compared to
+        # traditional form of regular expression matching
         if len(remaining) == 0:
             if callable(node):
                 return (node, args)
@@ -71,6 +69,8 @@ class Application(object):
                 if result:
                     return result
             elif len(key) and key[0] == '{':
+                # We match for concrete part first and then compare
+                # parameterised parts.
                 continue
         for key in node:
             if len(key) and key[0] == '{':

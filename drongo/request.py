@@ -1,6 +1,8 @@
 import cgi
 import http.cookies
 
+from .utils import dict2
+
 
 class Request(object):
 
@@ -8,11 +10,12 @@ class Request(object):
 
     def __init__(self, env):
         self.env = env
+        self._context = dict2()
 
         # Load the query params and form params
         env.setdefault('QUERY_STRING', '')
         inp = env.get('wsgi.input')
-        self._query = {}
+        self._query = dict2()
         fs = cgi.FieldStorage(inp, environ=env)
         for k in fs:
             fld = fs[k]
@@ -22,7 +25,7 @@ class Request(object):
                 for item in it:
                     if hasattr(item, 'filename') and item.filename:
                         is_file = True
-            except:
+            except TypeError:
                 if hasattr(fld, 'filename') and fld.filename:
                     is_file = True
             if not is_file:
@@ -30,11 +33,9 @@ class Request(object):
             self._query[k] = fld
 
         # Load the cookies
-        self._cookies = dict()
+        self._cookies = dict2()
         for cookie in http.cookies.BaseCookie(env.get('HTTP_COOKIE')).values():
             self._cookies[cookie.key] = cookie.value
-
-        self._context = {}
 
     @property
     def method(self):

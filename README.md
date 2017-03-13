@@ -1,11 +1,11 @@
 # drongo
-A pico web-framework.
+A nano web-framework.
 
 ## Quickstart
 ```
-from drongo import Application
+from drongo import Drongo
 
-app = Application()
+app = Drongo()
 
 @app.route('/')
 def hello(request):
