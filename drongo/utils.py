@@ -1,8 +1,12 @@
 class dict2(dict):
     def __setattr__(self, name, value):
+        if name.startswith('__'):
+            return super(dict2, self).__setattr__(name, value)
         self[name] = value
 
     def __getattr__(self, name):
+        if name.startswith('__'):
+            return super(dict2, self).__getattr__(name)
         return self.setdefault(name, dict2())
 
     @classmethod
