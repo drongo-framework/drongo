@@ -18,6 +18,8 @@ class Response(object):
         self._headers = {HttpResponseHeaders.CONTENT_TYPE: 'text/html'}
         self._status_code = HttpStatusCodes.HTTP_200
 
+    context = property(lambda self: self._context)
+
     def set_status(self, status_code):
         self._status_code = status_code
 
