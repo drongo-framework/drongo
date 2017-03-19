@@ -12,12 +12,13 @@ class Drongo(object):
         # Create the request
         request = Request(env)
         request.context.update(self.context)
+        request.context.request = request
 
         # Create the response
         response = Response()
 
         # Route matching
-        match = self.match_route(request.path)
+        match = self.match_route(request.path, request.method)
         if match:
             meth, args = match
             args = {k: v for k, v in args}
@@ -29,35 +30,38 @@ class Drongo(object):
 
         return response.bake(start_response)
 
-    def route(self, urlpattern):
+    def route(self, urlpattern, method=None):
         if not urlpattern.endswith('/'):
             urlpattern += '/'
         parts = tuple(urlpattern.split('/')[1:])
 
-        def _inner(method):
-            node = self.routes
-            for part in parts[:-1]:
-                node = node.setdefault(part, {})
-            node[parts[-1]] = method
-
-            return method
+        def _inner(call):
+            self.add_route(urlpattern, call, method)
+            return call
         return _inner
 
-    def add_route(self, urlpattern, method):
+    def add_route(self, urlpattern, call, method=None):
         if not urlpattern.endswith('/'):
             urlpattern += '/'
         parts = tuple(urlpattern.split('/')[1:])
         node = self.routes
-        for part in parts[:-1]:
+        for part in parts:
             node = node.setdefault(part, {})
-        node[parts[-1]] = method
+        if method is None:
+            node['GET'] = call
+            node['POST'] = call
+        elif isinstance(method, str):
+            node[method] = call
+        else:
+            for m in method:
+                node[m] = call
 
-    def recursive_route_match(self, node, remaining, args):
+    def recursive_route_match(self, node, remaining, method, args):
         # Route is stored in tree form for quick matching compared to
         # traditional form of regular expression matching
         if len(remaining) == 0:
-            if callable(node):
-                return (node, args)
+            if callable(node.get(method)):
+                return (node.get(method), args)
             else:
                 return None
 
@@ -65,7 +69,7 @@ class Drongo(object):
         for key in node:
             if key == remaining[0]:
                 result = self.recursive_route_match(node[key], remaining[1:],
-                                                    args)
+                                                    method, args)
                 if result:
                     return result
             elif len(key) and key[0] == '{':
@@ -75,15 +79,15 @@ class Drongo(object):
         for key in node:
             if len(key) and key[0] == '{':
                 result = self.recursive_route_match(
-                    node[key], remaining[1:],
+                    node[key], remaining[1:], method,
                     args + [(key[1:-1], remaining[0])]
                 )
                 if result:
                     return result
         return None
 
-    def match_route(self, path):
+    def match_route(self, path, method):
         if not path.endswith('/'):
             path += '/'
         path = path.split('/')[1:]
-        return self.recursive_route_match(self.routes, path, [])
+        return self.recursive_route_match(self.routes, path, method, [])
