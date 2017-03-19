@@ -39,7 +39,7 @@ class Request(object):
 
     @property
     def method(self):
-        return self.env['REQUEST_METHOD']
+        return self.env['REQUEST_METHOD'].upper()
 
     @property
     def path(self):
