@@ -7,7 +7,7 @@ from drongo.version import __version__
 setup(
     name='drongo',
     version=__version__,
-    description='A pico web-framework for python.',
+    description='A nano web-framework for python.',
     author='Sattvik Chakravarthy',
     author_email='sattvik@gmail.com',
     classifiers=[
