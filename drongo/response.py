@@ -26,8 +26,17 @@ class Response(object):
     def set_header(self, key, value):
         self._headers[key] = value
 
-    def set_cookie(self, key, value):
+    def set_cookie(self, key, value, domain=None, path='/', secure=None,
+                   httponly=True):
         self._cookies[key] = value
+        if domain:
+            self._cookies[key]['domain'] = domain
+        if path:
+            self._cookies[key]['path'] = path
+        if secure:
+            self._cookies[key]['secure'] = secure
+        if httponly:
+            self._cookies[key]['httponly'] = httponly
 
     def set_content(self, content, content_length=None):
         self._content_length = content_length
