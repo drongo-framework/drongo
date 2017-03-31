@@ -47,9 +47,17 @@ class TestGet(DrongoTestCase):
         self.assertEqual(result.text, 'helloworld')
 
     def test_disallowed_method(self):
-        @self.app.route(urlpattern='/hello', method='GET')
+        @self.app.route(urlpattern='/hello/disallowed', method='GET')
         def hello(ctx):
             return 'hello'
 
-        result = requests.post('http://localhost:5555/hello')
+        result = requests.post('http://localhost:5555/hello/disallowed')
         self.assertEqual(result.status_code, 404)
+
+    def test_allowed_method(self):
+        @self.app.route(urlpattern='/hello', method=['GET', 'POST'])
+        def hello(ctx):
+            return 'hello'
+
+        result = requests.get('http://localhost:5555/hello')
+        self.assertEqual(result.text, 'hello')
