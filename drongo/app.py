@@ -1,5 +1,6 @@
 from .request import Request
 from .response import Response
+from .status_codes import HttpStatusCodes
 from .utils import dict2
 
 
@@ -9,23 +10,26 @@ class Drongo(object):
         self.context = dict2()
 
     def __call__(self, env, start_response):
+        ctx = dict2()
+        ctx.update(self.context)
         # Create the request
-        request = Request(env)
-        request.context.update(self.context)
-        request.context.request = request
+        request = ctx.request = Request(env)
 
         # Create the response
-        response = Response()
+        response = ctx.response = Response()
 
         # Route matching
         match = self.match_route(request.path, request.method)
         if match:
             meth, args = match
             args = {k: v for k, v in args}
-            ret = meth(request, response, **args)
+            ret = meth(ctx, **args)  # FIXME: Handle exception
             if ret is not None:
                 # TODO: Check for types if really necessary!
                 response.set_content(ret)
+        else:
+            response.set_status(HttpStatusCodes.HTTP_404)
+            response.set_content('Not found!')
         # Returns empty response in case of no match
 
         return response.bake(start_response)

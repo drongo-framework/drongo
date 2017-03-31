@@ -1,21 +1,29 @@
 import cgi
 import http.cookies
+import urllib.parse
 
 from .utils import dict2
 
 
 class Request(object):
 
-    __slots__ = ['env', '_query', '_cookies', '_context']
+    __slots__ = ['env', '_query', '_cookies']
 
     def __init__(self, env):
         self.env = env
-        self._context = dict2()
+
+        self.env['REQUEST_METHOD'] = self.env['REQUEST_METHOD'].upper()
 
         # Load the query params and form params
-        env.setdefault('QUERY_STRING', '')
         inp = env.get('wsgi.input')
-        self._query = dict2()
+        self._query = urllib.parse.parse_qs(env.setdefault('QUERY_STRING', ''))
+
+        # Load the cookies
+        self._cookies = dict2()
+        for cookie in http.cookies.BaseCookie(env.get('HTTP_COOKIE')).values():
+            self._cookies[cookie.key] = cookie.value
+
+    def process_files(self):
         fs = cgi.FieldStorage(inp, environ=env)
         for k in fs:
             fld = fs[k]
@@ -32,14 +40,9 @@ class Request(object):
                 fld = fs.getlist(k)
             self._query[k] = fld
 
-        # Load the cookies
-        self._cookies = dict2()
-        for cookie in http.cookies.BaseCookie(env.get('HTTP_COOKIE')).values():
-            self._cookies[cookie.key] = cookie.value
-
     @property
     def method(self):
-        return self.env['REQUEST_METHOD'].upper()
+        return self.env['REQUEST_METHOD']
 
     @property
     def path(self):
@@ -52,7 +55,3 @@ class Request(object):
     @property
     def cookies(self):
         return self._cookies
-
-    @property
-    def context(self):
-        return self._context

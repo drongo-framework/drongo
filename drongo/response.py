@@ -7,18 +7,15 @@ from .utils import dict2
 
 
 class Response(object):
-    __slots__ = ['_content', '_content_length', '_context', '_cookies',
+    __slots__ = ['_content', '_content_length', '_cookies',
                  '_headers', '_status_code']
 
     def __init__(self):
         self._content = 'None'
         self._content_length = None
-        self._context = dict2()
         self._cookies = http.cookies.BaseCookie()
         self._headers = {HttpResponseHeaders.CONTENT_TYPE: 'text/html'}
         self._status_code = HttpStatusCodes.HTTP_200
-
-    context = property(lambda self: self._context)
 
     def set_status(self, status_code):
         self._status_code = status_code
