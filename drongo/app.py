@@ -8,6 +8,10 @@ class Drongo(object):
     def __init__(self):
         self.routes = {}
         self.context = dict2()
+        self._middlewares = []
+
+    def add_middleware(self, middleware):
+        self._middlewares.append(middleware)
 
     def __call__(self, env, start_response):
         ctx = dict2()
@@ -23,10 +27,28 @@ class Drongo(object):
         if match:
             meth, args = match
             args = {k: v for k, v in args}
-            ret = meth(ctx, **args)  # FIXME: Handle exception
-            if ret is not None:
-                # TODO: Check for types if really necessary!
-                response.set_content(ret)
+            try:
+                for mw in self._middlewares:
+                    if hasattr(mw, 'before'):
+                        mw.before(ctx)
+
+                ret = meth(ctx, **args)
+                if ret is not None:
+                    # TODO: Check for types if really necessary!
+                    response.set_content(ret)
+
+                for mw in self._middlewares[::-1]:
+                    if hasattr(mw, 'after'):
+                        mw.after(ctx)
+
+            except Exception as e:
+                response.set_status(HttpStatusCodes.HTTP_500)
+                response.set_content('Internal server error!')
+                raise e
+                for mw in self._middlewares:
+                    if hasattr(mw, 'exception'):
+                        mw.exception(ctx)
+
         else:
             response.set_status(HttpStatusCodes.HTTP_404)
             response.set_content('Not found!')
