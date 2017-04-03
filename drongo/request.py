@@ -2,6 +2,7 @@ import cgi
 import http.cookies
 import urllib.parse
 
+from .multipart import Multipart
 from .utils import dict2
 
 
@@ -36,6 +37,11 @@ class Request(object):
                 post_data += input.read(content_length - len(post_data))
             post_query = urllib.parse.parse_qs(post_data.decode('utf8'))
             self._query.update(post_query)
+        elif content_type.startswith('multipart/form-data'):
+            print(content_length)
+            boundary = content_type.split('boundary=')[1].encode('ascii')
+            mp = Multipart(boundary, content_length, self.env['wsgi.input'])
+            self._query.update(mp.parse())
 
     def process_files(self):
         fs = cgi.FieldStorage(inp, environ=env)
