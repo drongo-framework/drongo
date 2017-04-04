@@ -45,6 +45,8 @@ class Multipart(object):
 
     def parse(self):
         boundary = self.boundary
+        boundary1 = b'--' + boundary
+        boundary2 = b'--' + boundary + b'--'
         result = {}
 
         first_line = self.readline()
@@ -59,10 +61,9 @@ class Multipart(object):
                 if line == b'\r\n':
                     break
 
-                if line.strip() == b'--' + boundary:
+                if line.strip() == boundary1:
                     break
-
-                elif line.strip() == b'--' + boundary + b'--':
+                elif line.strip() == boundary2:
                     done = True
                     break
 
@@ -82,7 +83,12 @@ class Multipart(object):
             # Read value
             if 'filename' not in headers['content-disposition']:
                 line = self.readline()
-                value = line.decode('utf8').strip()
+                value = b''
+                while not line.strip().startswith(boundary1):
+                    value += line
+                    line = self.readline()
+
+                value = value.decode('utf8').strip()
                 name = headers['content-disposition']['name']
                 result.setdefault(name, []).append(value)
             else:
@@ -90,11 +96,15 @@ class Multipart(object):
                 name = ch['name']
                 out = File(filename=ch['filename'])
                 while self.length > 0:
-                    line = self.input.readline()
-                    self.length -= len(line)
+                    line = self.readline()
                     if boundary in line:
                         break
                     out.write(line)
-                result.setdefault(name, []).append(out)
+                if ch['filename']:
+                    result.setdefault(name, []).append(out)
+
+            if line.strip() == boundary2:
+                done = True
+                break
 
         return result
