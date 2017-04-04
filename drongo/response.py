@@ -66,3 +66,9 @@ class Response(object):
         self.set_status(status)
         self.set_content('')
         self.set_header(HttpResponseHeaders.LOCATION, url)
+
+    def set_json(self, obj, status=HttpStatusCodes.HTTP_200):
+        obj = json.dumps(obj, sort_keys=True, default=lambda x: str(x))
+        self.set_status(status)
+        self.set_header(HttpResponseHeaders.CONTENT_TYPE, 'application/json')
+        self.set_content(obj)
