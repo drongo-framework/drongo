@@ -19,15 +19,15 @@ class Request(object):
         inp = env.get('wsgi.input')
         self._query = urllib.parse.parse_qs(env.setdefault('QUERY_STRING', ''))
 
-        if self.method == 'POST':
-            self.process_post()
+        if self.method == 'POST' or self.method == 'PUT':
+            self.process_body()
 
         # Load the cookies
         self._cookies = dict2()
         for cookie in http.cookies.BaseCookie(env.get('HTTP_COOKIE')).values():
             self._cookies[cookie.key] = cookie.value
 
-    def process_post(self):
+    def process_body(self):
         content_type = self.env['CONTENT_TYPE']
         content_length = int(self.env['CONTENT_LENGTH'])
         if content_type == 'application/x-www-form-urlencoded':
