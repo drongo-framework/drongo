@@ -36,7 +36,7 @@ class Response(object):
             self._cookies[key]['httponly'] = httponly
 
     def set_content(self, content, content_length=None):
-        if content_length:
+        if content_length is not None:
             self._content_length = content_length
         self._content = content
 
