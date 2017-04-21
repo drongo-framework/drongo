@@ -36,7 +36,8 @@ class Response(object):
             self._cookies[key]['httponly'] = httponly
 
     def set_content(self, content, content_length=None):
-        self._content_length = content_length
+        if content_length:
+            self._content_length = content_length
         self._content = content
 
     def bake(self, start_response):
@@ -47,7 +48,7 @@ class Response(object):
             self._content_length = len(self._content)
 
         self._headers[HttpResponseHeaders.CONTENT_LENGTH] = \
-            str(len(self._content))
+            str(self._content_length)
         headers = list(self._headers.items())
         cookies = [(HttpResponseHeaders.SET_COOKIE, v.OutputString())
                    for _, v in self._cookies.items()]
