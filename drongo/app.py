@@ -3,12 +3,17 @@ from .response import Response
 from .status_codes import HttpStatusCodes
 from .utils import dict2
 
+import logging
+import sys
+import traceback
+
 
 class Drongo(object):
     def __init__(self):
         self.routes = {}
         self.context = dict2()
         self._middlewares = []
+        self._logger = logging.getLogger('drongo')
 
     def add_middleware(self, middleware):
         self._middlewares.append(middleware)
@@ -44,16 +49,20 @@ class Drongo(object):
             except Exception as e:
                 response.set_status(HttpStatusCodes.HTTP_500)
                 response.set_content('Internal server error!')
-                raise e
                 for mw in self._middlewares:
                     if hasattr(mw, 'exception'):
                         mw.exception(ctx)
+                exc_type, exc_value, exc_traceback = sys.exc_info()
+                self._logger.error('\n'.join(traceback.format_exception(
+                    exc_type, exc_value, exc_traceback)))
 
         else:
             response.set_status(HttpStatusCodes.HTTP_404)
             response.set_content('Not found!')
         # Returns empty response in case of no match
-
+        self._logger.info('{method}\t{path}\t{status}'.format(
+            method=request.method, path=request.path,
+            status=response._status_code))
         return response.bake(start_response)
 
     def route(self, urlpattern, method=None):
