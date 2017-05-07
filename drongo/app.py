@@ -65,16 +65,16 @@ class Drongo(object):
             status=response._status_code))
         return response.bake(start_response)
 
-    def route(self, urlpattern, method=None):
+    def url(self, pattern, method=None):
         def _inner(call):
-            self.add_route(urlpattern, call, method)
+            self.add_url(pattern, method, call)
             return call
         return _inner
 
-    def add_route(self, urlpattern, call, method=None):
-        if not urlpattern.endswith('/'):
-            urlpattern += '/'
-        parts = tuple(urlpattern.split('/')[1:])
+    def add_url(self, pattern, method=None, call=None):
+        if not pattern.endswith('/'):
+            pattern += '/'
+        parts = tuple(pattern.split('/')[1:])
         node = self.routes
         for part in parts:
             node = node.setdefault(part, {})
