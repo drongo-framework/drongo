@@ -8,8 +8,6 @@ setup(
     name='drongo',
     version=__version__,
     description='A nano web-framework for python.',
-    author='Sattvik Chakravarthy',
-    author_email='sattvik@gmail.com',
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Environment :: Console',
