@@ -134,3 +134,6 @@ class Drongo(object):
             self._url_manager.add_url(pattern, method, call)
             return call
         return _inner
+
+    def add_url(self, pattern, method=None, call=None):
+        self._url_manager.add_url(pattern, method, call)
