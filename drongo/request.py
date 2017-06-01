@@ -1,12 +1,14 @@
 import cgi
-import http.cookies
-import urllib.parse
+
+try:
+    from Cookie import BaseCookie
+except ImportError:
+    from http.cookies import BaseCookie
 
 from .utils import dict2
 
 
 class Request(object):
-
     __slots__ = ['env', '_query', '_cookies']
 
     def __init__(self, env):
@@ -16,11 +18,13 @@ class Request(object):
 
         # Load the query params and form params
         inp = env.get('wsgi.input')
-        self._query = urllib.parse.parse_qs(env.setdefault('QUERY_STRING', ''))
+        self._query = {}
+        self._query.update(env.get('GET'))
+        self._query.update(env.get('POST', {}))
 
         # Load the cookies
         self._cookies = dict2()
-        for cookie in http.cookies.BaseCookie(env.get('HTTP_COOKIE')).values():
+        for cookie in BaseCookie(env.get('HTTP_COOKIE')).values():
             self._cookies[cookie.key] = cookie.value
 
     @property

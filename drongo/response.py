@@ -1,5 +1,9 @@
 import json
-import http.cookies
+
+try:
+    from Cookie import BaseCookie
+except ImportError:
+    from http.cookies import BaseCookie
 
 from .response_headers import HttpResponseHeaders
 from .status_codes import HttpStatusCodes
@@ -13,7 +17,7 @@ class Response(object):
     def __init__(self):
         self._content = 'None'
         self._content_length = None
-        self._cookies = http.cookies.BaseCookie()
+        self._cookies = BaseCookie()
         self._headers = {HttpResponseHeaders.CONTENT_TYPE: 'text/html'}
         self._status_code = HttpStatusCodes.HTTP_200
 
