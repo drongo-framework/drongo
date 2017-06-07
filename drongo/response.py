@@ -1,4 +1,5 @@
 import json
+import six
 
 try:
     from Cookie import BaseCookie
@@ -45,8 +46,8 @@ class Response(object):
         self._content = content
 
     def bake(self, start_response):
-        if isinstance(self._content, str):
-            self._content = bytes(self._content, 'utf8')
+        if isinstance(self._content, six.text_type):
+            self._content = self._content.encode('utf8')
 
         if self._content_length is None:
             self._content_length = len(self._content)
