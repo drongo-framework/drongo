@@ -17,7 +17,6 @@ class Request(object):
         self.env['REQUEST_METHOD'] = self.env['REQUEST_METHOD'].upper()
 
         # Load the query params and form params
-        inp = env.get('wsgi.input')
         self._query = {}
         self._query.update(env.get('GET'))
         self._query.update(env.get('POST', {}))
