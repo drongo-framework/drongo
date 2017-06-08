@@ -1,12 +1,11 @@
 #!/usr/bin/env python
 
 from setuptools import find_packages, setup
-from drongo.version import __version__
 
 
 setup(
     name='drongo',
-    version=__version__,
+    version='1.0.0a1',
     description='A nano web-framework for python.',
     classifiers=[
         'Development Status :: 3 - Alpha',
