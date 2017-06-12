@@ -41,3 +41,7 @@ class Request(object):
     @property
     def cookies(self):
         return self._cookies
+
+    @property
+    def websocket_handler(self):
+        return self.env['WEBSOCKET_HANDLER']
