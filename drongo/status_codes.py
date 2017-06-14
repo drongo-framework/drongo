@@ -1,6 +1,4 @@
 class HttpStatusCodes:
-    HTTP_101 = '101 Switching Protocols'
-
     HTTP_200 = '200 OK'
     HTTP_201 = '201 Created'
     HTTP_202 = '202 Accepted'

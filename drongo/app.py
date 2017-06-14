@@ -1,4 +1,3 @@
-from . import websocket
 from .request import Request
 from .response import Response
 from .status_codes import HttpStatusCodes
@@ -134,13 +133,6 @@ class Drongo(object):
         def _inner(call):
             self._url_manager.add_url(pattern, method, call)
             return call
-        return _inner
-
-    def websocket(self, method):
-        def _inner(ctx, *args, **kwargs):
-            websocket.check_request_headers(ctx)
-            websocket.set_response(ctx)
-            return method(ctx, *args, **kwargs)
         return _inner
 
     def add_url(self, pattern, method=None, call=None):
