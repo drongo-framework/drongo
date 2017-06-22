@@ -1,8 +1,31 @@
 class UrlManager(object):
+    """Manages mapping between URL pattern, HTTP methods and callables.
+
+    UrlManager manages mapping betweeen (URL pattern, HTTP methods) and
+    callables. It can then retrieve the callable along with parameters from the
+    given url path.
+    """
+
     def __init__(self):
         self._routes = {}
 
     def add_url(self, pattern, method=None, call=None):
+        """Add a url pattern
+
+        Args:
+            pattern (str): URL pattern to add. This is usually '/' separated
+                path. Parts of the URL can be parameterised using curly braces.
+                Examples: "/", "/path/to/resource", "/resoures/{param}"
+            method (:obj:`str`, :obj:`list` of :obj:`str`, optional): HTTP
+                methods for the path specied. By default, GET method is added.
+                Value can be either a single method, by passing a string, or
+                multiple methods, by passing a list of strings.
+            call (callable): Callable corresponding to the url pattern and the
+                HTTP method specified.
+
+        Note:
+            A trailing '/' is always assumed in the pattern.
+        """
         if not pattern.endswith('/'):
             pattern += '/'
         parts = tuple(pattern.split('/')[1:])
@@ -18,6 +41,15 @@ class UrlManager(object):
                 node[m.upper()] = call
 
     def find_call(self, path, method):
+        """Find callable for the specified URL path and HTTP method
+
+        Args:
+            path: URL path to match
+            method: HTTP method
+
+        Note:
+            A trailing '/' is always assumed in the path.
+        """
         if not path.endswith('/'):
             path += '/'
         path = path.split('/')[1:]
