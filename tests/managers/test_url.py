@@ -25,3 +25,12 @@ class TestUrlManager(unittest.TestCase):
         self.assertIs(b, self.manager.find_call('/test', 'GET')[0])
         self.assertIs(b, self.manager.find_call('/test/', 'GET')[0])
         self.assertIs(c, self.manager.find_call('/hello/', 'POST')[0])
+
+    def test_params(self):
+        def a():
+            pass
+
+        self.manager.add_url(pattern='/test/{param}', method='GET', call=a)
+        _, params = self.manager.find_call('/test/hello', 'GET')
+
+        self.assertEqual(params, [('param', 'hello')])
