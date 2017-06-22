@@ -13,8 +13,9 @@ class UrlManager(object):
         """Add a url pattern
 
         Args:
-            pattern (str): URL pattern to add. This is usually '/' separated
-                path. Parts of the URL can be parameterised using curly braces.
+            pattern (:obj:`str`): URL pattern to add. This is usually '/'
+                separated path. Parts of the URL can be parameterised using
+                curly braces.
                 Examples: "/", "/path/to/resource", "/resoures/{param}"
             method (:obj:`str`, :obj:`list` of :obj:`str`, optional): HTTP
                 methods for the path specied. By default, GET method is added.

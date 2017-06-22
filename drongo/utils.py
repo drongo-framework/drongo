@@ -1,4 +1,11 @@
+"""Utility classes for use with Drongo"""
+
+
 class dict2(dict):
+    """Extended dict class.
+
+    This class allows access to dict items as members
+    """
     def __setattr__(self, name, value):
         if name.startswith('__'):
             return super(dict2, self).__setattr__(name, value)
@@ -11,6 +18,14 @@ class dict2(dict):
 
     @classmethod
     def from_dict(cls, val):
+        """Creates dict2 object from dict object
+
+        Args:
+            val (:obj:`dict`): Value to create from
+
+        Returns:
+            Equivalent dict2 object.
+        """
         if isinstance(val, dict):
             res = cls()
             for k, v in val.items():
@@ -25,6 +40,14 @@ class dict2(dict):
             return val
 
     def to_dict(self, val=None):
+        """Creates dict object from dict2 object
+
+        Args:
+            val (:obj:`dict2`): Value to create from
+
+        Returns:
+            Equivalent dict object.
+        """
         val = val or self
         if isinstance(val, dict2):
             res = dict()

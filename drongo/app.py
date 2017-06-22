@@ -12,8 +12,8 @@ import traceback
 class Drongo(object):
     def __init__(self):
         self.context = dict2()
-        self._url_manager = UrlManager()
         self._mw_manager = MiddlewareManager()
+        self._url_manager = UrlManager()
         self._logger = logging.getLogger('drongo')
 
     def add_middleware(self, middleware):
