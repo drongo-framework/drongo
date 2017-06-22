@@ -12,10 +12,10 @@ class UrlManager(object):
         if method is None:
             node['GET'] = call
         elif isinstance(method, str):
-            node[method] = call
+            node[method.upper()] = call
         else:
             for m in method:
-                node[m] = call
+                node[m.upper()] = call
 
     def find_call(self, path, method):
         if not path.endswith('/'):
@@ -43,6 +43,7 @@ class UrlManager(object):
                 # We match for concrete part first and then compare
                 # parameterised parts.
                 continue
+
         for key in node:
             if len(key) and key[0] == '{':
                 result = self._recursive_route_match(
