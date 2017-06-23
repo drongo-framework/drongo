@@ -6,15 +6,17 @@ class MiddlewareManager(object):
     exception.
 
     Example:
-        >>> class ExampleMiddleware:
-        >>>     def before(self, ctx):
-        >>>         pass  # Before the request
-        >>>
-        >>>     def after(self, ctx):
-        >>>         pass  # After the request
-        >>>
-        >>>     def exception(self, ctx, exc):
-        >>>         pass  # During an exception
+        ::
+
+            class ExampleMiddleware:
+                def before(self, ctx):
+                    pass  # Before the request
+
+                def after(self, ctx):
+                    pass  # After the request
+
+                def exception(self, ctx, exc):
+                    pass  # During an exception
 
     Note:
         Exception occuring in the callbacks will also result in the exception
