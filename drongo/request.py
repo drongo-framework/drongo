@@ -9,12 +9,12 @@ from .utils import dict2
 
 
 class Request(object):
-    __slots__ = ['env', '_query', '_cookies']
+    __slots__ = ['_env', '_query', '_cookies']
 
     def __init__(self, env):
-        self.env = env
+        self._env = env
 
-        self.env['REQUEST_METHOD'] = self.env['REQUEST_METHOD'].upper()
+        self._env['REQUEST_METHOD'] = self._env['REQUEST_METHOD'].upper()
 
         # Load the query params and form params
         self._query = {}
@@ -27,17 +27,35 @@ class Request(object):
             self._cookies[cookie.key] = cookie.value
 
     @property
+    def cookies(self):
+        """:obj:`drongo.utils.dict2` Dictionary of cookies passed in the
+        request.
+        """
+        return self._cookies
+
+    @property
+    def env(self):
+        """:obj:`dict` Dictionary containing all the information about the
+        request.
+        """
+        return self._env
+
+    @property
     def method(self):
-        return self.env['REQUEST_METHOD']
+        """:obj:`str` HTTP method of the request.
+        """
+        return self._env['REQUEST_METHOD']
 
     @property
     def path(self):
-        return self.env['PATH_INFO']
+        """:obj:`str` Resource path of the request.
+        """
+        return self._env['PATH_INFO']
 
     @property
     def query(self):
+        """:obj:`drongo.utils.dict2` Dictionary of the GET and POST (as
+        applicable) query combined. Key represents the name in the form and
+        each value is a :obj:`list` of corresponding values.
+        """
         return self._query
-
-    @property
-    def cookies(self):
-        return self._cookies

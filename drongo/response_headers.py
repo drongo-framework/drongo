@@ -1,4 +1,6 @@
 class HttpResponseHeaders:
+    """Commonly used response headers"""
+
     CACHE_CONTROL = 'cache-control'
     CONTENT_LENGTH = 'content-length'
     CONTENT_TYPE = 'content-type'

@@ -129,11 +129,14 @@ class Drongo(object):
 
     # Properties
     @property
-    def urls(self):
-        """Returns url manager."""
-        return self._url_manager
+    def middlewares(self):
+        """:obj:`drongo.managers.middleware.MiddlewareManager` App's middleware
+        manager.
+        """
+        return self._mw_manager
 
     @property
-    def middlewares(self):
-        """Returns middleware manager."""
-        return self._mw_manager
+    def urls(self):
+        """:obj:`drongo.managers.url.UrlManager` App's URL manager.
+        """
+        return self._url_manager

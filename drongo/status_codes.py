@@ -1,4 +1,6 @@
 class HttpStatusCodes:
+    """Commonly used Status codes"""
+
     HTTP_200 = '200 OK'
     HTTP_201 = '201 Created'
     HTTP_202 = '202 Accepted'
