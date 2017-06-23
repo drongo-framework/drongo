@@ -45,7 +45,6 @@ drongo\.response\_headers module
 
 .. automodule:: drongo.response_headers
     :members:
-    :undoc-members:
     :show-inheritance:
 
 drongo\.status\_codes module
@@ -53,7 +52,6 @@ drongo\.status\_codes module
 
 .. automodule:: drongo.status_codes
     :members:
-    :undoc-members:
     :show-inheritance:
 
 drongo\.utils module
@@ -63,5 +61,3 @@ drongo\.utils module
     :members:
     :undoc-members:
     :show-inheritance:
-
-
