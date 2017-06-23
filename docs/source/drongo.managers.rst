@@ -1,6 +1,11 @@
 drongo\.managers package
 ========================
 
+.. automodule:: drongo.managers
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Submodules
 ----------
 
@@ -21,10 +26,3 @@ drongo\.managers\.url module
     :show-inheritance:
 
 
-Module contents
----------------
-
-.. automodule:: drongo.managers
-    :members:
-    :undoc-members:
-    :show-inheritance:

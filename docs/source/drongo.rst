@@ -1,6 +1,11 @@
 drongo package
 ==============
 
+.. automodule:: drongo
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Subpackages
 -----------
 
@@ -60,10 +65,3 @@ drongo\.utils module
     :show-inheritance:
 
 
-Module contents
----------------
-
-.. automodule:: drongo
-    :members:
-    :undoc-members:
-    :show-inheritance:

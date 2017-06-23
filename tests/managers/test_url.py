@@ -17,9 +17,9 @@ class TestUrlManager(unittest.TestCase):
         def c():
             pass
 
-        self.manager.add_url(pattern='/', method='GET', call=a)
-        self.manager.add_url(pattern='/test', call=b)
-        self.manager.add_url(pattern='/hello', method=['GET', 'POST'], call=c)
+        self.manager.add(pattern='/', method='GET', call=a)
+        self.manager.add(pattern='/test', call=b)
+        self.manager.add(pattern='/hello', method=['GET', 'POST'], call=c)
 
         self.assertIs(a, self.manager.find_call('/', 'GET')[0])
         self.assertIs(b, self.manager.find_call('/test', 'GET')[0])
@@ -30,7 +30,7 @@ class TestUrlManager(unittest.TestCase):
         def a():
             pass
 
-        self.manager.add_url(pattern='/test/{param}', method='GET', call=a)
+        self.manager.add(pattern='/test/{param}', method='GET', call=a)
         _, params = self.manager.find_call('/test/hello', 'GET')
 
         self.assertEqual(params, [('param', 'hello')])

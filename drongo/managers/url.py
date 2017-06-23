@@ -9,7 +9,7 @@ class UrlManager(object):
     def __init__(self):
         self._routes = {}
 
-    def add_url(self, pattern, method=None, call=None):
+    def add(self, pattern, method=None, call=None):
         """Add a url pattern
 
         Args:
@@ -45,8 +45,8 @@ class UrlManager(object):
         """Find callable for the specified URL path and HTTP method
 
         Args:
-            path: URL path to match
-            method: HTTP method
+            path (:obj:`str`): URL path to match
+            method (:obj:`str`): HTTP method
 
         Note:
             A trailing '/' is always assumed in the path.

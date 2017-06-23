@@ -17,6 +17,13 @@ class Drongo(object):
         self._logger = logging.getLogger('drongo')
 
     def add_middleware(self, middleware):
+        """Add a middleware.
+
+        Args:
+            middleware: Instance of a middleware class
+        See Also:
+            :class:`drongo.managers.middleware.MiddlewareManager`
+        """
         self._mw_manager.add(middleware)
 
     def __call__(self, env, start_response):
@@ -39,20 +46,20 @@ class Drongo(object):
             # Convert tuple to dictionary
             args = {k: v for k, v in args}
             try:
-                self._mw_manager.call_before(ctx)
+                self._mw_manager._call_before(ctx)
 
                 ret = meth(ctx, **args)
                 if ret is not None:
                     # TODO: Check for types if really necessary!
                     response.set_content(ret)
 
-                self._mw_manager.call_after(ctx)
+                self._mw_manager._call_after(ctx)
 
             except Exception as e:
                 response.set_status(HttpStatusCodes.HTTP_500)
                 response.set_content('Internal server error!')
 
-                self._mw_manager.call_exception(ctx, e)
+                self._mw_manager._call_exception(ctx, e)
                 exc_type, exc_value, exc_traceback = sys.exc_info()
 
                 self._logger.error('\n'.join(traceback.format_exception(
@@ -69,19 +76,64 @@ class Drongo(object):
         return response.bake(start_response)
 
     def url(self, pattern, method=None):
+        """Decorator to map url pattern to the callable.
+
+        Args:
+            pattern (:obj:`str`): URL pattern to add. This is usually '/'
+                separated path. Parts of the URL can be parameterised using
+                curly braces.
+                Examples: "/", "/path/to/resource", "/resoures/{param}"
+            method (:obj:`str`, :obj:`list` of :obj:`str`, optional): HTTP
+                methods for the path specied. By default, GET method is added.
+                Value can be either a single method, by passing a string, or
+                multiple methods, by passing a list of strings.
+
+        Note:
+            A trailing '/' is always assumed in the pattern.
+
+        Example:
+            >>> @app.url(pattern='/path/to/resource', method='GET')
+            >>> def function(ctx):
+            >>>     return 'Hello world'
+
+        See Also:
+            :func:`drongo.managers.url.UrlManager.add`
+        """
         def _inner(call):
-            self._url_manager.add_url(pattern, method, call)
+            self._url_manager.add(pattern, method, call)
             return call
         return _inner
 
     def add_url(self, pattern, method=None, call=None):
-        self._url_manager.add_url(pattern, method, call)
+        """Add a url pattern.
+
+        Args:
+            pattern (:obj:`str`): URL pattern to add. This is usually '/'
+                separated path. Parts of the URL can be parameterised using
+                curly braces.
+                Examples: "/", "/path/to/resource", "/resoures/{param}"
+            method (:obj:`str`, :obj:`list` of :obj:`str`, optional): HTTP
+                methods for the path specied. By default, GET method is added.
+                Value can be either a single method, by passing a string, or
+                multiple methods, by passing a list of strings.
+            call (callable): Callable corresponding to the url pattern and the
+                HTTP method specified.
+
+        Note:
+            A trailing '/' is always assumed in the pattern.
+
+        See Also:
+            :func:`drongo.managers.url.UrlManager.add`
+        """
+        self._url_manager.add(pattern, method, call)
 
     # Properties
     @property
     def urls(self):
+        """Returns url manager."""
         return self._url_manager
 
     @property
     def middlewares(self):
+        """Returns middleware manager."""
         return self._mw_manager
