@@ -5,10 +5,10 @@ from setuptools import find_packages, setup
 
 setup(
     name='drongo',
-    version='1.0.0a1',
+    version='1.0.0',
     description='A nano web-framework for python.',
     classifiers=[
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 5 - Production/Stable',
         'Environment :: Console',
         'Environment :: Web Environment',
         'Intended Audience :: Developers',
@@ -20,6 +20,8 @@ setup(
         'Topic :: Internet :: WWW/HTTP',
     ],
     packages=find_packages(),
+    url='https://github.com/drongo-framework/drongo',
+    download_url='https://github.com/drongo-framework/drongo/archive/v1.0.0.tar.gz',
     include_package_data=True,
     install_requires=[
         'six'
