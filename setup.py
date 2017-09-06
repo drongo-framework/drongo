@@ -5,7 +5,7 @@ from setuptools import find_packages, setup
 
 setup(
     name='drongo',
-    version='1.0.0',
+    version='1.0.1',
     description='A nano web-framework for python.',
     author='Sattvik Chakravarthy, Sagar Chakravarthy',
     author_email='sattvik@gmail.com',
@@ -23,7 +23,6 @@ setup(
     ],
     packages=find_packages(),
     url='https://github.com/drongo-framework/drongo',
-    download_url='https://github.com/drongo-framework/drongo/archive/v1.0.0.tar.gz',
     include_package_data=True,
     install_requires=[
         'six'

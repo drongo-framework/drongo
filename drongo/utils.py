@@ -16,6 +16,24 @@ class dict2(dict):
             return super(dict2, self).__getattr__(name)
         return self.setdefault(name, dict2())
 
+    def get_property(self, prop):
+        """Access nested value using dot separated keys
+
+        Args:
+            prop (:obj:`str`): Property in the form of dot separated keys
+
+        Returns:
+            Property value if exists, else `None`
+        """
+        prop = prop.split('.')
+        root = self
+        for p in prop:
+            if p in root:
+                root = root[p]
+            else:
+                return None
+        return root
+
     @classmethod
     def from_dict(cls, val):
         """Creates dict2 object from dict object

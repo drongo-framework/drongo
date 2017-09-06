@@ -26,3 +26,9 @@ class TestDict2(unittest.TestCase):
         self.assertNotIn('__something__', a)
         with self.assertRaises(AttributeError):
             print(a.__something_else__)
+
+    def test_property(self):
+        a = dict2.from_dict({'a': {'b': 10}})
+        b = a.get_property('a.b')
+        self.assertEqual(b, 10)
+        self.assertIsNone(a.get_property('a.c'))
