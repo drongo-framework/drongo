@@ -1,3 +1,4 @@
+from .exceptions import NotFoundException
 from .managers import MiddlewareManager, UrlManager
 from .request import Request
 from .response import Response
@@ -7,6 +8,9 @@ from .utils import dict2
 import logging
 import sys
 import traceback
+
+
+__all__ = ['Drongo']
 
 
 class Drongo(object):
@@ -68,6 +72,7 @@ class Drongo(object):
         else:
             response.set_status(HttpStatusCodes.HTTP_404)
             response.set_content('Not found!')
+            self._mw_manager._call_exception(ctx, NotFoundException())
 
         # Returns empty response in case of no match
         self._logger.info('{method}\t{path}\t{status}'.format(

@@ -5,7 +5,7 @@ from setuptools import find_packages, setup
 
 setup(
     name='drongo',
-    version='1.0.1',
+    version='1.2.0',
     description='A nano web-framework for python.',
     author='Sattvik Chakravarthy, Sagar Chakravarthy',
     author_email='sattvik@gmail.com',

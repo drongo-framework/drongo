@@ -47,4 +47,4 @@ class MiddlewareManager(object):
     def _call_exception(self, ctx, exc):
         for mw in self._middlewares:
             if hasattr(mw, 'exception'):
-                mw.exception(ctx)
+                mw.exception(ctx, exc)

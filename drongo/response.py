@@ -11,9 +11,12 @@ from .status_codes import HttpStatusCodes
 from .utils import dict2
 
 
+__all__ = ['Response']
+
+
 class Response(object):
-    __slots__ = ['_content', '_content_length', '_cookies',
-                 '_headers', '_status_code']
+    __slots__ = ['_content', '_content_length', '_cookies', '_headers',
+                 '_status_code']
 
     def __init__(self):
         self._content = 'None'

@@ -8,6 +8,9 @@ except ImportError:
 from .utils import dict2
 
 
+__all__ = ['Request']
+
+
 class Request(object):
     __slots__ = ['_env', '_query', '_cookies']
 
