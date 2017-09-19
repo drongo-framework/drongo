@@ -22,7 +22,8 @@ class Endpoint(object):
 class APIEndpoint(Endpoint):
     def __call__(self):
         self.valid = True
-        self.prepare()
+        self.init()
+        self.validate()
 
         if self.valid:
             try:
@@ -41,7 +42,10 @@ class APIEndpoint(Endpoint):
                 'errors': self.errors
             })
 
-    def prepare(self):
+    def init(self):
+        pass
+
+    def validate(self):
         pass
 
 
