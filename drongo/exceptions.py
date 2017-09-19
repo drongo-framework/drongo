@@ -1,7 +1,12 @@
 __all__ = [
-    'NotFoundException'
+    'NotFoundException',
+    'SkipExecException'
 ]
 
 
 class NotFoundException(Exception):
+    pass
+
+
+class SkipExecException(Exception):
     pass

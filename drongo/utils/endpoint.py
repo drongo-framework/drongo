@@ -1,4 +1,4 @@
-class APIEndpoint(object):
+class Endpoint(object):
     __url__ = '/'
     __http_methods__ = ['GET']
 
@@ -15,6 +15,11 @@ class APIEndpoint(object):
         ep = cls(ctx, **kwargs)
         return ep()
 
+    def call(self):
+        raise NotImplementedError
+
+
+class APIEndpoint(Endpoint):
     def __call__(self):
         self.valid = True
         self.prepare()
@@ -39,5 +44,7 @@ class APIEndpoint(object):
     def prepare(self):
         pass
 
-    def call(self):
-        raise NotImplementedError
+
+class ViewEndpoint(Endpoint):
+    def __call__(self):
+        return self.call()

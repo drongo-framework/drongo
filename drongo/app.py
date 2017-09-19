@@ -1,4 +1,4 @@
-from .exceptions import NotFoundException
+from .exceptions import NotFoundException, SkipExecException
 from .managers import MiddlewareManager, UrlManager
 from .request import Request
 from .response import Response
@@ -58,6 +58,9 @@ class Drongo(object):
                     response.set_content(ret)
 
                 self._mw_manager._call_after(ctx)
+
+            except SkipExecException:
+                pass  # Do nothing, as it's handled somewhere
 
             except Exception as e:
                 response.set_status(HttpStatusCodes.HTTP_500)

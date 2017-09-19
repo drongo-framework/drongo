@@ -44,8 +44,8 @@ class URLHelper(object):
                 )
 
     @classmethod
-    def api_endpoint(cls, app, klass, base_url=''):
-        """Registers API Endpoint class with the app
+    def endpoint(cls, app, klass, base_url=''):
+        """Registers Endpoint class with the app
 
         Args:
             app: Drongo app instance
