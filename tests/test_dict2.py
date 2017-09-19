@@ -32,3 +32,26 @@ class TestDict2(unittest.TestCase):
         b = a.get_property('a.b')
         self.assertEqual(b, 10)
         self.assertIsNone(a.get_property('a.c'))
+
+    def test_update(self):
+        a = dict2.from_dict({'a': {'b': 10}, 'b': 10})
+        b = dict2.from_dict({'a': {'b': 20}})
+
+        a.update(b)
+        self.assertEqual(a, {'a': {'b': 20}, 'b': 10})
+
+        a = dict2.from_dict({})
+        b = dict2.from_dict({'a': {'b': 20}})
+
+        a.update(b)
+        self.assertEqual(a, {'a': {'b': 20}})
+
+    def test_set_get(self):
+        a = dict2()
+        a.a = 10
+        a.b.c = 20
+        a.x = {'y': 30}
+
+        self.assertEqual(a.a, 10)
+        self.assertEqual(a.b.c, 20)
+        self.assertEqual(a.x.y, 30)

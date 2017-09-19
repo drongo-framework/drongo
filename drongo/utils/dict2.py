@@ -9,6 +9,9 @@ class dict2(dict):
     def __setattr__(self, name, value):
         if name.startswith('__'):
             return super(dict2, self).__setattr__(name, value)
+        if isinstance(value, dict):
+            value = self.from_dict(value)
+
         self[name] = value
 
     def __getattr__(self, name):
@@ -34,6 +37,13 @@ class dict2(dict):
                 return None
         return root
 
+    def update(self, other):
+        for k, v in other.items():
+            if k in self and isinstance(v, dict) and isinstance(self[k], dict):
+                self[k].update(v)
+            else:
+                setattr(self, k, v)
+
     @classmethod
     def from_dict(cls, val):
         """Creates dict2 object from dict object
@@ -44,11 +54,15 @@ class dict2(dict):
         Returns:
             Equivalent dict2 object.
         """
-        if isinstance(val, dict):
+        if isinstance(val, dict2):
+            return val
+
+        elif isinstance(val, dict):
             res = cls()
             for k, v in val.items():
                 res[k] = cls.from_dict(v)
             return res
+
         elif isinstance(val, list):
             res = []
             for item in val:
