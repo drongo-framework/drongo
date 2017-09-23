@@ -95,4 +95,14 @@ class UrlManager(object):
                 )
                 if result:
                     return result
+            elif key == '*':
+                continue
+
+        for key in node:
+            if key == '*':
+                result = self._recursive_route_match(node[key][''], [], method,
+                                                     args)
+                if result:
+                    return result
+
         return None
