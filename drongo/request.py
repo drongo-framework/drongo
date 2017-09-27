@@ -1,5 +1,3 @@
-import cgi
-
 try:
     from Cookie import BaseCookie
 except ImportError:

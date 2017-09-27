@@ -42,6 +42,9 @@ class APIEndpoint(Endpoint):
                 'errors': self.errors
             })
 
+    def add_error(self, group, message):
+        self.errors.setdefault(group, []).append(message)
+
     def init(self):
         pass
 
