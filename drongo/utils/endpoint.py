@@ -1,3 +1,10 @@
+import logging
+import sys
+import traceback
+
+from drongo.status_codes import HttpStatusCodes
+
+
 class Endpoint(object):
     __url__ = '/'
     __http_methods__ = ['GET']
@@ -20,6 +27,8 @@ class Endpoint(object):
 
 
 class APIEndpoint(Endpoint):
+    logger = logging.getLogger('drongo.api')
+
     def __call__(self):
         self.valid = True
         self.init()
@@ -31,19 +40,27 @@ class APIEndpoint(Endpoint):
                     'status': 'OK',
                     'payload': self.call()
                 })
-            except Exception as e:
-                self.ctx.response.set_json({
-                    'status': 'ERROR',
-                    'payload': 'Internal error.'
-                })
-        else:
-            self.ctx.response.set_json({
-                'status': 'ERROR',
-                'errors': self.errors
-            })
+                return
 
-    def add_error(self, group, message):
+            except Exception:
+                exc_type, exc_value, exc_traceback = sys.exc_info()
+
+                self._logger.error('\n'.join(traceback.format_exception(
+                    exc_type, exc_value, exc_traceback)))
+
+                self.error('Internal server error.')
+                self.status(HttpStatusCodes.HTTP_500)
+
+        self.ctx.response.set_json({
+            'status': 'ERROR',
+            'errors': self.errors
+        })
+
+    def error(self, group='_', message=''):
         self.errors.setdefault(group, []).append(message)
+
+    def status(self, status=HttpStatusCodes.HTTP_200):
+        self.ctx.response.set_status(status)
 
     def init(self):
         pass
