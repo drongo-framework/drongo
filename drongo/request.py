@@ -1,3 +1,5 @@
+import json
+
 try:
     from Cookie import BaseCookie
 except ImportError:
@@ -10,9 +12,12 @@ __all__ = ['Request']
 
 
 class Request(object):
+    """Request class."""
+
     __slots__ = ['_env', '_query', '_cookies']
 
     def __init__(self, env):
+        """Create request object from env."""
         self._env = env
 
         self._env['REQUEST_METHOD'] = self._env['REQUEST_METHOD'].upper()
@@ -29,34 +34,35 @@ class Request(object):
 
     @property
     def cookies(self):
-        """:obj:`drongo.utils.dict2` Dictionary of cookies passed in the
-        request.
-        """
+        """:obj:`drongo.utils.dict2` Dictionary of cookies."""
         return self._cookies
 
     @property
     def env(self):
-        """:obj:`dict` Dictionary containing all the information about the
-        request.
-        """
+        """:obj:`dict` Dictionary containing information about the request."""
         return self._env
 
     @property
     def method(self):
-        """:obj:`str` HTTP method of the request.
-        """
+        """:obj:`str` HTTP method of the request."""
         return self._env['REQUEST_METHOD']
 
     @property
     def path(self):
-        """:obj:`str` Resource path of the request.
-        """
+        """:obj:`str` Resource path of the request."""
         return self._env['PATH_INFO']
 
     @property
     def query(self):
-        """:obj:`drongo.utils.dict2` Dictionary of the GET and POST (as
-        applicable) query combined. Key represents the name in the form and
-        each value is a :obj:`list` of corresponding values.
+        """:obj:`drongo.utils.dict2` Dictionary of the GET and POST.
+
+        Dictionary of the GET and POST (as applicable) query combined. Key
+        represents the name in the form and each value is a :obj:`list` of
+        corresponding values.
         """
         return self._query
+
+    @property
+    def json(self):
+        """Request body loaded as json."""
+        return dict2.from_dict(json.loads(self.env['BODY'].decode('utf-8')))

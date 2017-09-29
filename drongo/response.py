@@ -1,4 +1,5 @@
 import json
+
 import six
 
 try:
@@ -8,7 +9,6 @@ except ImportError:
 
 from .response_headers import HttpResponseHeaders
 from .status_codes import HttpStatusCodes
-from .utils import dict2
 
 
 __all__ = ['Response']

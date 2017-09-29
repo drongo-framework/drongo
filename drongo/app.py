@@ -1,13 +1,13 @@
+import logging
+import sys
+import traceback
+
 from .exceptions import NotFoundException, SkipExecException
 from .managers import MiddlewareManager, UrlManager
 from .request import Request
 from .response import Response
 from .status_codes import HttpStatusCodes
 from .utils import dict2
-
-import logging
-import sys
-import traceback
 
 
 __all__ = ['Drongo']
