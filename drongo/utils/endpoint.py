@@ -27,7 +27,7 @@ class Endpoint(object):
 
 
 class APIEndpoint(Endpoint):
-    logger = logging.getLogger('drongo.api')
+    _logger = logging.getLogger('drongo.api')
 
     def __call__(self):
         self.valid = True
