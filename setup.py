@@ -25,7 +25,9 @@ setup(
     url='https://github.com/drongo-framework/drongo',
     include_package_data=True,
     install_requires=[
-        'six'
+        'passlib',
+        'pymongo',
+        'six',
     ],
     zip_safe=False,
 )
