@@ -48,7 +48,7 @@ class APIEndpoint(Endpoint):
                 self._logger.error('\n'.join(traceback.format_exception(
                     exc_type, exc_value, exc_traceback)))
 
-                self.error('Internal server error.')
+                self.error(message='Internal server error.')
                 self.status(HttpStatusCodes.HTTP_500)
 
         self.ctx.response.set_json({
