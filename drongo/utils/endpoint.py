@@ -58,6 +58,7 @@ class APIEndpoint(Endpoint):
 
     def error(self, group='_', message=''):
         self.errors.setdefault(group, []).append(message)
+        self.valid = False
 
     def status(self, status=HttpStatusCodes.HTTP_200):
         self.ctx.response.set_status(status)
