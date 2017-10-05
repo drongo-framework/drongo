@@ -1,6 +1,9 @@
 """Utility classes for use with Drongo"""
 
 
+UNSET = object()
+
+
 class dict2(dict):
     """Extended dict class.
 
@@ -71,7 +74,7 @@ class dict2(dict):
         else:
             return val
 
-    def to_dict(self, val=None):
+    def to_dict(self, val=UNSET):
         """Creates dict object from dict2 object
 
         Args:
@@ -80,8 +83,10 @@ class dict2(dict):
         Returns:
             Equivalent dict object.
         """
-        val = val or self
-        if isinstance(val, dict2):
+        if val is UNSET:
+            val = self
+
+        if isinstance(val, dict2) or isinstance(val, dict):
             res = dict()
             for k, v in val.items():
                 res[k] = self.to_dict(v)
