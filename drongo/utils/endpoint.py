@@ -54,7 +54,7 @@ class APIEndpoint(Endpoint):
         self.ctx.response.set_json({
             'status': 'ERROR',
             'errors': self.errors
-        })
+        }, status=HttpStatusCodes.HTTP_400)
 
     def error(self, group='_', message=''):
         self.errors.setdefault(group, []).append(message)
