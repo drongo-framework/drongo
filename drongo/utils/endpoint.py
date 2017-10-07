@@ -49,7 +49,11 @@ class APIEndpoint(Endpoint):
                     exc_type, exc_value, exc_traceback)))
 
                 self.error(message='Internal server error.')
-                self.status(HttpStatusCodes.HTTP_500)
+                self.ctx.response.set_json({
+                    'status': 'ERROR',
+                    'errors': self.errors
+                }, status=HttpStatusCodes.HTTP_500)
+                return
 
         self.ctx.response.set_json({
             'status': 'ERROR',
