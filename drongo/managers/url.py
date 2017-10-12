@@ -10,7 +10,7 @@ class UrlManager(object):
         self._routes = {}
         self._reverse = {}
 
-    def add(self, pattern, method=None, call=None):
+    def add(self, pattern, method=None, call=None, name=None):
         """Add a url pattern.
 
         Args:
@@ -24,6 +24,8 @@ class UrlManager(object):
                 multiple methods, by passing a list of strings.
             call (callable): Callable corresponding to the url pattern and the
                 HTTP method specified.
+            name (:obj:`str`): Name for the pattern that can be used for
+                reverse matching
 
         Note:
             A trailing '/' is always assumed in the pattern.
@@ -41,7 +43,9 @@ class UrlManager(object):
         else:
             for m in method:
                 node[m.upper()] = call
-        self._reverse[call] = pattern
+
+        if name is not None:
+            self._reverse[name] = pattern
 
     def find_call(self, path, method):
         """Find callable for the specified URL path and HTTP method.
@@ -58,13 +62,13 @@ class UrlManager(object):
         path = path.split('/')[1:]
         return self._recursive_route_match(self._routes, path, method, [])
 
-    def find_pattern(self, call):
-        """Finds url pattern for the specified callable.
+    def find_pattern(self, name):
+        """Finds url pattern for the specified name.
 
         Args:
-            call (:obj:`callable`): Callable object for reverse match
+            name (:obj:`str`): Name of the url pattern
         """
-        return self._reverse.get(call)
+        return self._reverse.get(name)
 
     def _recursive_route_match(self, node, remaining, method, args):
         # Route is stored in tree form for quick matching compared to
