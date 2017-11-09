@@ -65,4 +65,4 @@ class Request(object):
     @property
     def json(self):
         """Request body loaded as json."""
-        return dict2.from_dict(json.loads(self.env['BODY'].decode('utf-8')))
+        return json.loads(self.env['BODY'].decode('utf-8'))
